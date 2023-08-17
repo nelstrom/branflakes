@@ -3,6 +3,8 @@ import Resolver from 'ember-resolver';
 import loadInitializers from 'ember-load-initializers';
 import config from 'branflakes/config/environment';
 
+window.myGlobalVariable = 'Hello!';
+
 export default class App extends Application {
   modulePrefix = config.modulePrefix;
   podModulePrefix = config.podModulePrefix;
