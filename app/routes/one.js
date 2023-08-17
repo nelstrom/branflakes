@@ -1,3 +1,7 @@
 import Route from '@ember/routing/route';
 
-export default class OneRoute extends Route {}
+export default class OneRoute extends Route {
+  model() {
+    window.myGlobalVariable = 'Hello!';
+  }
+}

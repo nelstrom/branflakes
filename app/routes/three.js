@@ -1,3 +1,4 @@
 import Route from '@ember/routing/route';
 
-export default class ThreeRoute extends Route {}
+export default class ThreeRoute extends Route {
+}
