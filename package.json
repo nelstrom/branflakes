@@ -78,6 +78,7 @@
     "edition": "octane"
   },
   "dependencies": {
-    "ember-browser-services": "^4.0.4"
+    "ember-browser-services": "^4.0.4",
+    "tinymce": "^6"
   }
 }
