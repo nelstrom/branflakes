@@ -7,5 +7,16 @@ module.exports = function (defaults) {
     // Add options here
   });
 
-  return app.toTree();
+  const { Webpack } = require('@embroider/webpack');
+  return require('@embroider/compat').compatBuild(app, Webpack, {
+    staticAddonTestSupportTrees: true,
+    staticAddonTrees: true,
+    staticHelpers: true,
+    staticModifiers: true,
+    staticComponents: true,
+    splitAtRoutes: ['one', 'two', 'three'], // can also be a RegExp
+    packagerOptions: {
+      webpackConfig: {},
+    },
+  });
 };
