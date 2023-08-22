@@ -16,7 +16,7 @@ module.exports = function (defaults) {
     staticHelpers: true,
     staticModifiers: true,
     staticComponents: true,
-    splitAtRoutes: ['one', 'two', 'three'], // can also be a RegExp
+    // splitAtRoutes: ['one', 'two', 'three'], // can also be a RegExp
     packagerOptions: {
       webpackConfig: {
         plugins: [new BundleAnalyzerPlugin()],
