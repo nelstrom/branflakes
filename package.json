@@ -83,6 +83,7 @@
   },
   "dependencies": {
     "ember-browser-services": "^4.0.4",
+    "highlight.js": "^11.8.0",
     "tinymce": "^6"
   }
 }
