@@ -8,7 +8,7 @@ module('Acceptance | timing', function (hooks) {
   test('Visit route three', async function (assert) {
     await visit('/three');
 
-    await this.pauseTest();
+    // await this.pauseTest();
 
     assert.dom('#highlighted-block').hasClass('hljs');
   });
