@@ -8,8 +8,8 @@ export async function timeout(delay = DEFAULT_DELAY) {
   });
 }
 
-export async function flakeTime(probability = 0.5) {
-  const duration = Math.random() > probability ? 0 : DEFAULT_DELAY;
-  console.log('flakeTime duration:', duration);
+export async function flakeTime({ probability, label }) {
+  const duration = Math.random() >= probability ? 0 : DEFAULT_DELAY;
+  console.log(`[flakeTime] "${label}" delayed by: ${duration}`);
   await timeout(duration);
 }
