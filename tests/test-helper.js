@@ -9,4 +9,10 @@ setApplication(Application.create(config.APP));
 
 setup(QUnit.assert);
 
+QUnit.config.urlConfig.push({
+  id: 'seed',
+  label: 'Randomize',
+  tooltip: 'When checked, tests run in a random order',
+});
+
 start();
