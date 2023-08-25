@@ -24,16 +24,28 @@ module('List sort (naive)', function () {
   test('sort by name', function (assert) {
     const sorted = listSort(original, 'name');
     assert.deepEqual(
-      sorted.map((item) => item.name),
-      ['apple', 'bear', 'orange', 'pear']
+      sorted.map((item) => [item.position, item.name]),
+      [
+        [1, 'apple'],
+        [2, 'bear'],
+        [3, 'orange'],
+        [4, 'pear'],
+      ],
+      'List is sorted alphabetically by "name" field'
     );
   });
 
   test('sort by position', function (assert) {
     const sorted = listSort(original, 'position');
     assert.deepEqual(
-      sorted.map((item) => item.position),
-      [1, 2, 3, 4]
+      sorted.map((item) => [item.position, item.name]),
+      [
+        [1, 'apple'],
+        [2, 'bear'],
+        [3, 'orange'],
+        [4, 'pear'],
+      ],
+      'List is sorted numerically by "position" field'
     );
   });
 });
