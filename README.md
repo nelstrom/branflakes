@@ -1,7 +1,8 @@
 # branflakes
 
 This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+
+This application includes examples for my "Living with flaky tests" presentation, at EmberFest 2023.
 
 ## Prerequisites
 
