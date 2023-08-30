@@ -9,6 +9,15 @@ setApplication(Application.create(config.APP));
 
 setup(QUnit.assert);
 
+QUnit.config.reorder = false;
+
+// Adding a checkbox for the 'reorder' option doesn't work!
+// QUnit.config.urlConfig.push({
+//   id: 'reorder',
+//   label: 'Hoist recently failed tests',
+//   tooltip: 'When checked, tests that failed on the previous run will run first',
+// });
+
 QUnit.config.urlConfig.push({
   id: 'seed',
   label: 'Randomize',
