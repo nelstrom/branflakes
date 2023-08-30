@@ -11,7 +11,4 @@ module('Illustrative test', function () {
   test('flakes', function (assert) {
     assert.true(Math.random() > 0.5);
   });
-  test('My global variable', function (assert) {
-    assert.strictEqual(window.myGlobalVariable, 'Hello!');
-  });
 });
