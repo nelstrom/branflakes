@@ -1,0 +1,1349 @@
+0:01
+Well, here we have a very basic test suite with three tests.
+
+0:06
+This test should always pass.
+
+0:10
+This test should always fail and this test, it's pretty much a toss of the coin.
+
+0:18
+It should pass half the time, it should fail half the time.
+
+0:21
+So this is a flaky test.
+
+0:23
+Let's have a look at what that looks like when, when we run these.
+
+0:29
+So as expected, the passing test passes, the failing test fails and the flaky test this time it's failed.
+
+0:37
+Let's run it again this time, it's failed, it's passed.
+
+0:41
+Ok.
+
+0:42
+Let's do a few more of those past, failed, failed, past failed.
+
+0:48
+Ok.
+
+0:49
+It's a time cost to cost.
+
+0:51
+It's a coin toss.
+
+0:54
+So math dot random is always going to return a nu- a value between zero and one.
+
+1:01
+So half the times that's gonna be a passing assertion, half the times it's going to be a failing assertion.
+
+1:08
+So, don't use math dot random in your assertions and you won't have to worry about flaky tests.
+
+1:15
+There you go.
+
+1:15
+That's my talk.
+
+1:16
+Any questions?
+
+1:20
+No, OK.
+
+1:21
+There's, there's more to it than this.
+
+1:22
+Of course, randomness can be a source of, of flakiness.
+
+1:29
+but randomness can come in disguise, it's not always going to be as easy to spot as this.
+
+1:35
+So I want to show you some of the ways that randomness can be hiding in your code base.
+
+1:41
+Give you some techniques for isolating that randomness because it could be anywhere.
+
+1:48
+It's not necessarily going to be in your test suite, it could be in your application code.
+
+1:54
+Now, I said in my abstract for this presentation, I said that tests should either pass or fail, not both.
+
+2:06
+And I stand by that.
+
+2:09
+A passing test is what we eventually want.
+
+2:12
+A failing test is instructive but a flaky test is bad.
+
+2:19
+We do not want to have flaky tests.
+
+2:25
+What I'd like to propose as a as a general working plan is to say if you find yourself in this state where there is some sort of randomness, there is some probability there is a temptation to, to hope to pray that your test is going to pass.
+
+2:48
+But if you've recognized that one of your tests is flaky.
+
+2:53
+No amount of praying, it's gonna get it to be green every time, what you should do instead is to force that test to fail every time a failing test is something you can fix.
+
+3:17
+So the goal really given, given this this expression here, Math dot Random is going to return something between zero and one.
+
+3:26
+So if we make this a bigger number like six, this is going to pass more often than it feels this is going to pass most of the time.
+
+3:35
+This is gonna pass all of the time.
+
+3:38
+What I'm saying is even if it's that, even if it's passing almost all of the time, it's still a flaky test.
+
+3:47
+And the, the, the rarer the failures are the harder the problem is to diagnose.
+
+3:55
+So don't wish, don't try and wish your way towards almost always passing instead, be methodical and make it always fail.
+
+4:07
+Because now you're back in the realm of determinism, you're back in the realm of predictability.
+
+4:16
+OK?
+
+4:16
+So this is my, my recommendation, my TLDR if you have a flaky test, try to make it fail every time and then you can work on fixing it.
+
+4:32
+So tests that pass are good.
+
+4:35
+Tests that fail are also good.
+
+4:37
+What we want to avoid is this middle ground.
+
+4:41
+I, when I drew this diagram, it made me think of, there's a scene in Indiana Jones and the Temple of Doom where they're all on this rope bridge across a canyon.
+
+4:53
+And Indiana Jones cuts the bridge and in the middle and it falls and some of the people fall one way, some of the people fall the other way.
+
+5:01
+A flaky test somehow feels like that to me is you're not on stable ground any time, any time that rope is cut, you might find yourself falling over to the to the pass side or you might find yourself falling over to the fail side, but neither one is good.
+
+5:21
+You still have a flaky test.
+
+5:26
+Now, before we start looking for sources of flakiness sources of randomness, I want to start by looking at testing best practices.
+
+5:40
+Now here suppose that we want to write a function that accepts a list and source that list.
+
+5:50
+Now we might test this by starting with a list which contains a bunch of objects.
+
+5:57
+Each of these has a name field and a position field.
+
+6:02
+So you can imagine you might you might be required to write a test or sorry, you might be required to write a function that would accept this as input and you could say sort it by name and give me the result or sort it by position and give me the result.
+
+6:16
+So here we've got our module, we've got one test case saying sort by name, we're going to call our function.
+
+6:23
+This is imported here, we'll have a look at the implementation in a moment we're passing in the original, we're passing in the field that we want to sort by.
+
+6:31
+And then in an assertion where we're, we're capturing the, the result of the function.
+
+6:36
+And just to slightly shorten this instead of comparing objects with names and positions.
+
+6:42
+We're, we're mapping this to as a sequence of tules if you like.
+
+6:48
+So we still get to see the, the position and the name and we can check their order.
+
+6:53
+So in this test, we're sorting by name and we're checking that they are sorted by name in this test.
+
+7:01
+Very similar, but we're going to sort my position.
+
+7:04
+And again, we'll assert that they are sort of 1234, and, and leave a message if it, if it works.
+
+7:13
+So let's just have a look at what that test looks like can run that it's passing.
+
+7:19
+It's all green list is sorted alphabetically by name fields.
+
+7:23
+List is sorted numerically by position field.
+
+7:25
+Great.
+
+7:25
+OK.
+
+7:27
+Looks like we've got a green test suite.
+
+7:29
+Let's move on to the next the next ticket.
+
+7:33
+Actually, before we do that, let's just have a look at the implementation.
+
+7:37
+So I'm importing this list sort from a package is called util naive sort.
+
+7:45
+I wonder how naive it is.
+
+7:47
+Oh, there it is.
+
+7:47
+OK.
+
+7:48
+So what does this function do?
+
+7:49
+It receives something and then it returns it completely unchanged.
+
+7:55
+OK.
+
+7:55
+So I think there's some work to do on this implementation.
+
+8:02
+Now, where is the problem here?
+
+8:04
+Is there a problem with the implementation or is there a problem with the tests?
+
+8:09
+Well, it's books really, isn't it?
+
+8:12
+If we look here our original state, now we've written two tests.
+
+8:18
+One of the tests is sorting by name.
+
+8:20
+One of the tests is sorting by position and the objects that we're concerned with have only those two fields.
+
+8:26
+So there's really only two ways that this array could be sorted.
+
+8:32
+But there is actually a third way and this is slightly implicit, you have to look harder to, to see this.
+
+8:36
+And that is actually just the, the natural order that the array was created in.
+
+8:42
+And what we have here as, as an example is something where all three possible ways of sorting it are aligned.
+
+8:52
+So I've created this original thing.
+
+8:54
+If you sort it alphabetically, you're not going to change the array.
+
+8:59
+If you sort it by position, you're not going to change the array.
+
+9:02
+The, the order that they're declared in, in the first place before applying any sorting is already sorted according to all of these, all of these ways that we could sort it.
+
+9:14
+So what we have is entirely aligned and we, what we want to have instead is something where it's a skew.
+
+9:23
+Here, if we sort alphabetically name needs to be first, but here it's third.
+
+9:28
+If we sort by position, this one needs to be first, this one needs to be last, but it's appearing second.
+
+9:34
+So the three possible ways that we could sort this, the way that we declare it in the first place is unsorted.
+
+9:42
+It's not sorted by name, it's not sorted by position.
+
+9:46
+We want to be antagonistic.
+
+9:50
+When we're writing tests, we want to be a difficult customer we don't want to provide our the functions that we're testing.
+
+10:01
+We don't want to give them inputs that match our expectations for free.
+
+10:09
+Essentially what we have, what we have here.
+
+10:15
+Go away.
+
+10:18
+What we have here is a test that passes by fluke, not by, not by hard work, not by honest toil.
+
+10:27
+So let's let's have a look.
+
+10:30
+Now I have my hard boiled list sort.
+
+10:34
+OK.
+
+10:34
+So here we're going to use this original thing which is not aligned.
+
+10:44
+And we've got essentially the same the same things here.
+
+10:47
+Now, I'm just gonna make this import the original function.
+
+10:52
+Let's see, sort of hard boiled.
+
+10:55
+What we expect is for this to fail and we want to see our tests fail.
+
+11:00
+That's the point I want to make here, both of these tests are failing, right?
+
+11:10
+And we know why?
+
+11:10
+Because the, the original does actually need to be transformed.
+
+11:16
+So that when we sort by name, now we've got apple bear, orange pear that is that is, it's been transformed to produce the a at alphabetical sorting.
+
+11:30
+And here when we sort by position of, of course, it's ordered 1234 and the, the alphabetically it's now not ordered.
+
+11:42
+OK.
+
+11:43
+Now, if I change this to the list sort, here, here's our original naive list sort.
+
+11:49
+Here's an actual implementation which receives something as input, it copies it, it calls the sort function.
+
+11:56
+It has a compa a comparison function.
+
+11:58
+very, very basic, I mean, it's really building on top of javascript primitives here, but it is adding that that functionality that lets you pass in an array and the field you want to sort it by.
+
+12:09
+So so if we change this, so that instead of using the naively sort, it uses the actual implementation.
+
+12:17
+Now we go from a failing test suite to a passing test suite in test driven design.
+
+12:27
+There's a principle that we're encouraged to follow, which is to say that first.
+
+12:33
+Well, let, let's do it.
+
+12:34
+In three words, it's red green reactor and it's very important to stress that red comes first.
+
+12:44
+You want to see your tests fail before you make them pass.
+
+12:50
+If you've never seen your test in its red state, then how can you trust when it's green that it is truly green?
+
+13:00
+OK.
+
+13:00
+This naive list sort which was doing no work at all.
+
+13:05
+by writing time by writing tests that we never saw in the red state, we could have missed, missed that.
+
+13:13
+There was functionality missing.
+
+13:14
+In fact, in this case, all of the functionality was missing.
+
+13:19
+But there are nuances that, you know, this is a sledgehammer example.
+
+13:22
+I'm trying to make a point here.
+
+13:23
+There are, there are ways that you could be adding small, you know, smaller features to that list sort of function.
+
+13:31
+And that if you go and write the implementation or write the test, you don't see that test fail first, then how can you trust when it's green?
+
+13:41
+Ok.
+
+13:41
+So red, green reactor, that final step, we don't need to spend long on that.
+
+13:46
+But once you've got your functionality, once it's green and you know that you can trust your tests to turn red when you break stuff, then you have the freedom you can, when making your test is green, you can do the simplest thing that gets the test to pass.
+
+14:03
+And now that you know, the test will be read when it should be read and it will be green when it should be green.
+
+14:09
+You have the freedom to refactor your code that is to change the, the implementation without changing the behavior.
+
+14:16
+That's what refactoring is.
+
+14:19
+So we don't need to spend long on that.
+
+14:21
+That's not the point of today.
+
+14:22
+But I wanted to start with these testing, best practices.
+
+14:25
+You want to see your tests fail so that, you know, you can trust your tests.
+
+14:31
+Your tests are a safety net.
+
+14:33
+They're there to catch you when you break stuff.
+
+14:36
+OK?
+
+14:38
+You want to test your safety net.
+
+14:41
+OK?
+
+14:43
+In this template, we've got a code block.
+
+14:47
+And let me show you in, in the browser.
+
+14:50
+This is what it looks like.
+
+14:51
+The first thing I'm thinking when I look at this is, wouldn't it be nice to have a bit of syntax highlighting and there's lots of good libraries out there that, that can do this.
+
+15:00
+I've chosen highlight dot Js and I've chosen to create a modifier for this.
+
+15:06
+Now it's an app modifiers.
+
+15:08
+It's in a file called highlighter dash eager.
+
+15:10
+You, you'll see why in a moment we're going to go through several variations of this modifier.
+
+15:14
+So this is the really basic version, it imports the, the library that it needs.
+
+15:19
+And then when the, when the modifier is called, it calls highlight element passing in the element that the modifier was called on.
+
+15:29
+So if we go over here and we say this, this is the pre tag and we want to do this inside of element space and we'll say highlighter eager.
+
+15:41
+Now if we have a look, there we go, we've got the syntax highlighting and let's just inspect this.
+
+15:48
+So we've gone from a pre which I had declared the ID and a class of javascript.
+
+15:55
+That's a hint to tell her which which, which language to use.
+
+16:00
+So the class has been retained and the ID has been retained, but it's added to this highlight Js tag and then language dash javascript.
+
+16:08
+And as you can see what was just bare text inside is a bunch of spans being added there to, to have the, the coloring.
+
+16:16
+So it works.
+
+16:17
+And if we wanted to write a test for that, it could look something like this we're gonna visit that route.
+
+16:23
+And here I'm just saying, I'm just looking up that element by ID and asserting that it has the hljs class.
+
+16:31
+, remember that's not a class that I've added myself.
+
+16:36
+It's a class that's added when the modifier kicks in.
+
+16:39
+So there we have hljs and let's see that test running here it is.
+
+16:45
+So that passes great.
+
+16:48
+Ok.
+
+16:49
+This isn't a Flicky test.
+
+16:51
+, let's make it into a flaky test for, for the purposes of demonstration.
+
+16:58
+Now, this isn't entirely contrived.
+
+17:00
+I hope what I want to suggest.
+
+17:03
+Now, here we have we have a static import.
+
+17:10
+And at the moment, the way this project is set up, it means that highlight Js is always going to be included in the bundle, but actually, it's only needed at the moment, it's only needed on, on one of these one of the three routes that I've declared.
+
+17:25
+So we could use embroider route splitting and so on.
+
+17:28
+But there's another feature we could use, which is just a, a dynamic import.
+
+17:32
+So if we open highlighter lazy, what we're doing here is instead of declaring the import statically at the top of the file, we're using the import feature of, of javascript to dynamically load.
+
+17:52
+And by using this version of the modifier, we're going to we're only going to include highlight Js in the bundle when it's needed.
+
+18:01
+So hence the, the naming, this is the lazy version.
+
+18:04
+This is the Eager version, the eager lazy designation there that's referring to when the dependency is loaded.
+
+18:12
+In Eager is loaded up front.
+
+18:13
+Everyone always gets it.
+
+18:14
+Whether they use it or not in lazy, it's loaded only when needed.
+
+18:20
+OK?
+
+18:20
+So let's change this from eager to lazy.
+
+18:23
+That's all we have to do.
+
+18:24
+We're just switching from one modifier to another and let's see what this looks like.
+
+18:29
+Now, I don't know if you can tell, I don't know if the screen refresh rate is good enough here, but there's a moment there where I see like a flash of Uns styled text as it were.
+
+18:40
+It's not changing font or anything, but it is momentarily it's black and then the color pops in and that wasn't the case before I'll just switch back to eager and here.
+
+18:53
+Yeah, I don't know if you could see it before, but there is no flash of Uns style content.
+
+18:58
+So let's switch back to lazy.
+
+19:01
+OK.
+
+19:04
+So the benefit here, let me just show you the benefit.
+
+19:07
+Actually, if we go to the network tab, if I start on this route here, Notice these are the Java script scripts that are loaded and as I navigate around, nothing changes.
+
+19:18
+But when I click on three, the the route that uses loader, it loads two more chunks.
+
+19:24
+These are lazily loaded by by wet pack or whatever.
+
+19:32
+I'm not sure how that works actually.
+
+19:36
+And just to, to sort of prove that something has changed here.
+
+19:41
+If I go back to eager here and let's start again on route one.
+
+19:46
+So these are the scripts that are loaded, go to script two, go to page three.
+
+19:50
+Nothing is loaded here.
+
+19:53
+OK?
+
+19:53
+So, so there is actually it's, it's not that easy to, to detect, but there is a change.
+
+19:59
+If we, we use the, the lazy version, then we, we load those scripts on demand and that way we can keep our bundle size smaller.
+
+20:08
+OK.
+
+20:09
+So there's a valid reason why you might want to make this change.
+
+20:13
+I hope I'm selling this to you.
+
+20:15
+But let's see what happens to our test.
+
+20:19
+00 Our text is broken.
+
+20:24
+Yeah.
+
+20:25
+OK.
+
+20:26
+So we've made an improvement in terms of performance, but we've broken our tests.
+
+20:31
+So what are we going to do about this?
+
+20:34
+Well, what we have here is a timing issue previously, we could depend on our, our dependencies being loaded synchronously, but now they're loaded asynchronously.
+
+20:47
+And it looks as though our test.
+
+20:50
+If we go to our test here, I'm gonna make a, a bold claim here that this assertion is running before highlight has had a chance to do its thing.
+
+21:03
+Now, I could test this hunch if I was to say a wait time out.
+
+21:15
+That's not, that's not helpful.
+
+21:18
+I actually have, I have a function by this name, time out and let's just say I spell it, let's say we just wait 500 milliseconds.
+
+21:43
+OK.
+
+21:45
+Now we've made our test pass but we made it slow.
+
+21:48
+So that's not great.
+
+21:51
+So my, my hunch was that this assertion was failing because when we, when we visit the page, it takes a moment for highlight Js to initialize and to change to change the dom and just by waiting a little bit, we can give highlight Js time to do its thing.
+
+22:14
+This is not a good solution because I've arbitrarily chosen a number that's high enough.
+
+22:20
+500.
+
+22:21
+I could maybe get away with a smaller number.
+
+22:22
+Let's try 10 and see.
+
+22:24
+OK.
+
+22:24
+That fails.
+
+22:26
+Let's try 50.
+
+22:29
+OK.
+
+22:29
+50 worked.
+
+22:32
+OK.
+
+22:33
+50 worked today.
+
+22:37
+But it might not work tomorrow.
+
+22:41
+Whatever number you choose, there's always a risk that it works today, but not tomorrow.
+
+22:45
+That is a source of randomness.
+
+22:48
+A source of flakiness.
+
+22:49
+It's something that might hurt you later.
+
+22:53
+Now let me show you this timer function.
+
+22:59
+So this is returning a promise.
+
+23:01
+It uses the native set time out future.
+
+23:03
+you pass in a delay and it resolves when that period has elapsed.
+
+23:09
+I've also got this method here which calls time out, but it does a little bit of adds a little bit of randomness to decide how much of a delay you want it to have.
+
+23:22
+So let me switch this instead of using time out, let's switch to flake town.
+
+23:33
+And here, I'm gonna give it a label of test probability 0.5.
+
+23:45
+So this means that half of the time when this runs, it's not going to add a delay at all.
+
+23:54
+And the other half of the time it's going to add a 302nd, sorry 300 millisecond delay.
+
+24:00
+So we're introducing a bit of randomness intentionally here.
+
+24:04
+Now, I also have a version of the, the highlighter modifier which also uses flake time.
+
+24:14
+And again, this has got this 0.5% probability.
+
+24:20
+So if we run this test now, oh dear.
+
+24:30
+OK.
+
+24:30
+So I'm gonna run this a few times and I'm also going to bring up the console test delayed.
+
+24:39
+Oh yes.
+
+24:40
+There's one more change I need to make here, which is we're gonna use lazy.
+
+24:44
+What was it called the invariable delay.
+
+24:51
+OK.
+
+24:51
+So we're using this modifier which as well as doing the asynchronous import, it just adds in a random delay of possibly 300 milliseconds or possibly nothing.
+
+25:04
+Now, let's see what our test does.
+
+25:10
+OK.
+
+25:10
+So here, the import was not delayed and the test was delayed and we have a passing test.
+
+25:16
+Let's run it again this time, the import was delayed by 300 milliseconds and the test was not delayed and we have a failing test.
+
+25:24
+So by adding this randomness, we're now simulating what it would be like for this test to be flaky again, we're seeing that, ok, there is actually a chance the way I've built this, there is a chance that both of them don't have a delay or both of them do have a delay.
+
+25:47
+but yeah, in general, the, the intention here is to intentionally make this into a flaky test.
+
+25:54
+So there it's feeling, feeling, passing, failing, passing, failing, failing, failing, failing, failing, I could do this all day.
+
+26:08
+This is so fun.
+
+26:10
+This is slightly contrived.
+
+26:11
+I admit I'm intentionally making a feeling a Flicky test.
+
+26:15
+Now, let's take our variable delay and we're going to give this a probability of one which is to say, always, always flick out and this one, we're gonna give a probability of zero.
+
+26:33
+So this is never gonna wait.
+
+26:37
+And what I'm hoping, let's bring this up again.
+
+26:39
+So import was delayed by 300 test was not delayed.
+
+26:44
+We have a fail test, failing test, failing test, failing test.
+
+26:48
+It feels every time now, ok?
+
+26:52
+And this puts us on a footing where we can actually diagnose this problem and fix it.
+
+27:00
+If we're in a position where every time you run the test, it might pass, it might fail.
+
+27:06
+If you think you found a solution for that flaky test, even seeing it, seeing the test pass doesn't give you confidence because it might just be that you're getting lucky.
+
+27:19
+Ok?
+
+27:19
+But now we know that this test is failing every time and if we can make a change, not a change to these arbitrary delays, but a change to our actual implementation code.
+
+27:32
+If we can introduce that change and see this pass every time, then we know we've eliminated the the source of randomness, the source of flakiness in our, in our application and in our tests.
+
+27:47
+OK?
+
+27:48
+I think it's time to actually look for the solution now.
+
+27:52
+So here is our highlighter lazy variable delay.
+
+27:59
+Let me just close these other ones which we don't need anymore.
+
+28:02
+Let's look at the actual highlighter.
+
+28:06
+And what we're using here is something from Ember test waiters called wait for promise.
+
+28:13
+And if I just compare these side by side here, we're just, the load function is asynchronous.
+
+28:20
+So of weighting that and here we've wrapped this call to a function inside of wait for promise and this signals to Ember's test suite that something asynchronous is happening.
+
+28:39
+So let's go back to three and we're gonna change from highlighter lazy variable delay.
+
+28:45
+We're just going to switch to highlight and now this is the proper the the implementation that I want to use.
+
+28:50
+It still has this source of flakiness and let's see what happens.
+
+29:01
+OK?
+
+29:02
+So notice sometimes it's, it's not being delayed, sometimes it is being delayed, but it passes anyway.
+
+29:12
+OK.
+
+29:13
+Let's switch this again because it was in a different file that I did this switch this to 100% probability it's always going to be delayed.
+
+29:23
+Doesn't matter, it still passes.
+
+29:26
+And in fact, let's just, let's just make this a really long delay.
+
+29:30
+We're gonna make it wait for three seconds.
+
+29:32
+So we're waiting, we're waiting, we're waiting, but it passes.
+
+29:36
+Yeah, I feel confident now that I can remove this source of randomness, I feel confident that this is a fix.
+
+29:52
+I can take away that sort of randomness and, feel confident that this is no longer a flaky test.
+
+30:03
+OK?
+
+30:03
+I've got a, a test module here with tests named Do do, oh Sorry, there's, there's only one do.
+
+30:17
+Now I just want to demonstrate because this is, this is a sort of known order from from in music.
+
+30:25
+The order that these tests run matches the order that they've been declared in the in the module, the test module.
+
+30:33
+So if I refresh this, you can't even see that anything's happening really just it's rerunning the tests in the same order every single time.
+
+30:43
+Now Q unit has a feature a configuration option called seed.
+
+30:51
+And this lets you run the tests in a seeded random order.
+
+30:55
+Let me just demonstrate, I can actually interact with this via query paras here.
+
+30:58
+So if I just add a query param and call it seed with, with nothing else there, look at that T came first T rafa do, it's completely randomized.
+
+31:09
+And if I refresh this, it runs in a different order again, each time I refresh the order that the tests, the test cases are run changes.
+
+31:23
+Now simply the presence of the seed configuration option like seed true, randomizes things.
+
+31:31
+The other thing you can do though is you can set it to a value.
+
+31:34
+And here, I'm just going to choose.
+
+31:35
+Drew was here, Drew was where Drew was here.
+
+31:41
+It can be any arbitrary value, but this is, it's random in the sense, it's not the same order that they were declared in the file.
+
+31:48
+But now if I refresh this, it's the same every time, right?
+
+31:54
+As long as we're using, as long as we're using the same seed, we get the same random order.
+
+32:03
+Now, actually, there's something you can do.
+
+32:07
+I, I don't know if you know, there's all these check boxes along here.
+
+32:11
+This one here you may not have seen before randomized when checked tests run in random order.
+
+32:15
+Let's try that.
+
+32:17
+There we go.
+
+32:17
+See, that's added the seed.
+
+32:19
+I can take it off, it's removed the, the query param, add it, remove it.
+
+32:25
+This is really easy to do.
+
+32:26
+I'm just going to show you how I did that test helper.
+
+32:31
+So here we're adding to the Q unit URL config the seat.
+
+32:40
+This is the, the feature that already exists in Q unit label is the label and then we've got a tool tip as well.
+
+32:49
+And it's as simple as that.
+
+32:52
+You can, you can make your test run in a random order just by checking that.
+
+32:56
+But there's something else I've done here, which is that you can actually check the seat and we can log it.
+
+33:04
+So here, look, each time I refresh this, the seed changes, it's a random value.
+
+33:11
+Now, if I wanted to reproduce one of these, I could copy that and I could stick it out.
+
+33:17
+Whoops, I messed that up, stick it there.
+
+33:21
+But the other thing is I've actually included a clickable link here.
+
+33:25
+So let's get rid of that again.
+
+33:26
+In fact, I'll just remove that, randomize it again.
+
+33:30
+Just refresh a couple of times.
+
+33:32
+Let's say this particular order is interesting to us.
+
+33:34
+Just click that link and now it's going to run in the order every time until I remove that seed query para.
+
+33:43
+So that's, that's useful if you want to randomize the order that your tests run in.
+
+33:50
+OK.
+
+33:50
+We're going to have a look now at an example where leaking state between tests can cause a, a test to fail under some circumstances and pass under others.
+
+34:04
+And classically global variables are a thing you want to avoid.
+
+34:09
+And here I'm deliberately flouting that advice for the sake of making a demonstration.
+
+34:15
+So here I've got three routes, I've got route one which in its model hook.
+
+34:21
+When this, when this route loads, it sets my global variable to the string.
+
+34:26
+Hello.
+
+34:28
+And likewise in route number two, it it changes it to a different string.
+
+34:34
+In route number three, it doesn't actually interact with that with that global variable.
+
+34:40
+Now, here we're assigning this on the window object.
+
+34:47
+And in the browser, if I, if I visit, well, let's, let's just see if I, if I visit route one and check my, my global variable.
+
+34:57
+There it is.
+
+34:57
+It's set to the string.
+
+34:58
+Hello.
+
+34:59
+Now, if I go to route two, it now says hi.
+
+35:05
+In fact, instead of running this again and again, what I'm going to do here is I'm going to set up a live expression for my global variable.
+
+35:11
+So this is going to update any time the variable updates.
+
+35:15
+So there as I navigate to route one that changes to hello, navigate to route two, it changes to hi.
+
+35:21
+When I navigate to route three, it doesn't change, it stays whatever it was ok.
+
+35:30
+No, I suppose we were to write some tests against this.
+
+35:36
+We say visit route one and check that the global variable has the value.
+
+35:42
+Hello, visit route two, check that it has the value high and then suppose we visit route three and we check that the value is hello.
+
+35:56
+Now remember in route three, we don't actually change this variable.
+
+36:00
+So there's there's something wrong with this test or there's something wrong with the implementation.
+
+36:05
+But in any case, if we have a look at these, these tests here, I am running just the the global variable module.
+
+36:15
+So let's run that.
+
+36:18
+And ok, this is interesting.
+
+36:19
+So visit route one passes, visit route two passes, visit route three is failing.
+
+36:30
+And if I rerun this again, it passes, let's run it again.
+
+36:35
+Fails, passes, fails, passes.
+
+36:38
+Ok, so clearly this looks flaky.
+
+36:41
+Now there's, there's an interesting thing going on here.
+
+36:43
+The, the order that these tests are declared in is visit route one, visit route two, visit route three.
+
+36:49
+And the tests run in that order has this feature which is enabled by default to rerun previously failed tests out of order before all other tests.
+
+37:00
+It's a really useful feature.
+
+37:02
+I suppose you have 100 tests and let's say they're not flaky tests.
+
+37:07
+And the test case that you're working on is number 100.
+
+37:11
+And if you have to sit and wait for 99 passing tests before seeing the one that you're interested in, that's, you know, that slows down your feedback cycle.
+
+37:20
+This feature here says that if test number 100 fails, then the next time you run the test suite, it's going to be the first one that runs.
+
+37:28
+So you get a quicker feedback cycle.
+
+37:30
+However, in this case here, we've got some kind of flakiness that seems to depend on the order that these tests are running.
+
+37:38
+And so when, when three fails, the next time it gets run first and somehow that causes it to pass, run it again because three passed last time, it's now no longer reordered.
+
+37:50
+Ok.
+
+37:51
+So, really what we want is for this test to be failing every time.
+
+37:56
+And so we can actually, although this is enabled by default, we can turn this off.
+
+38:01
+And the way we can do it is by opening the just help her.
+
+38:06
+And it's just AAA setting that you can set on Q unit dot config reorder, set it to false.
+
+38:13
+And now if we run this again, each time I run it, they always run 123 in that order.
+
+38:19
+And now we can see this test fails every time.
+
+38:22
+OK?
+
+38:22
+And when the test fails every time that is better than having a flaky test.
+
+38:26
+This is something we can we can diagnose.
+
+38:32
+and let's try randomizing it as well.
+
+38:34
+So here 321, it's three passes 132, it passes 312, it passes 312 again, 321.
+
+38:53
+OK.
+
+38:54
+Here we have one where it fails and we could keep doing this again and again and again, the pattern that emerges is that any time three runs immediately after 23 fails.
+
+39:07
+So what we have here is no non atomic tests.
+
+39:15
+And although three is kind of the, the smoking gun here, three looks like it's the test that's failing.
+
+39:25
+But really this is kind of the, the canary in the coal mine.
+
+39:28
+It's not, it's the first thing to expire.
+
+39:34
+but it doesn't necessarily mean that the problem is with this test, the fact that these two tests have this inter relatedness, it might be that fixing, this actually means making a change to test two or it might mean making a chest change to test three or it might be make the tests are fine, but something in the implementation needs to change.
+
+39:54
+It could be that you need to change both of these tests.
+
+39:57
+In any case, don't see the flaky test as necessarily being the thing that's at fault.
+
+40:05
+It's a bad actor and in this case, test two is also a bad actor.
+
+40:12
+I hope that this is illustrated why global variables are bad and why you shouldn't use them.
+
+40:18
+But nevertheless, there is a, there is a way to fix this which would be to say, instead of interacting with the window object, which is a global, a global piece of state.
+
+40:30
+What we could do is we could say that within each test, we're going to provide a mock version of the window object and that mock version will only its lifetime will be constrained within the lifetime of the test.
+
+40:49
+There's an add on from curb strike which makes this really easy.
+
+40:53
+And that is called Ember browser services.
+
+40:56
+I'll show you how, how we could use it here.
+
+40:58
+Now, there's two sides to this.
+
+40:59
+We need to make changes to our implementation and we need to make changes to our test.
+
+41:04
+Let's start by changing the implementation.
+
+41:07
+So we're gonna have to inject a service from Ember browser services and instead of directly accessing window in this context, which is going to give us the global window object, we're going to say this dot window.
+
+41:28
+Now the way the ember browser services works, Essentially this dot window is going to be an alias to window in in normal conditions.
+
+41:38
+But this gives us the flexibility that we can say in certain contexts.
+
+41:44
+For example, in the testing context instead of this dot window giving you the window, we're gonna make this dot window return a mock window and we can control the the lifetime of that window.
+
+41:56
+So here I need to make the same change in right two.
+
+42:03
+Yeah.
+
+42:04
+So any time that you're interacting with a window, you want to be actually interacting with this dot window.
+
+42:11
+And in route three, we don't actually interact with the window.
+
+42:13
+So we don't need to make any changes there.
+
+42:16
+And there's quite a few changes I need to make here.
+
+42:18
+So I've actually got a a test that's already set up here.
+
+42:21
+Now we need to call set up browser fakes window true.
+
+42:26
+That means we are mocking the window in this context.
+
+42:30
+And let me just change my test from global variable to mocked global variable.
+
+42:40
+OK.
+
+42:40
+And the other thing is that inside of each test, we're going to say that the window is the one provided by and Barroso Cyrus.
+
+42:56
+OK.
+
+42:59
+So when we say window dot my global variable, instead of using the real window, we're using the fake window that has been set up by this hook.
+
+43:09
+OK?
+
+43:10
+And let's run this.
+
+43:15
+And we're still randomizing the order here.
+
+43:17
+Remember previously, if three ran immediately after two, it would fail, keep going until we hit that case.
+
+43:28
+OK.
+
+43:28
+There it is 123 and it's passing.
