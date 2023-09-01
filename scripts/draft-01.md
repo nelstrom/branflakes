@@ -1,3 +1,7 @@
+# Living with flaky tests
+
+## What is a flaky test?
+
 Well, here we have a very basic test suite with three tests.
 
 This test should always pass.
@@ -46,6 +50,8 @@ Give you some techniques for isolating that randomness because it could be anywh
 
 It's not necessarily going to be in your test suite, it could be in your application code.
 
+## Strategy: make it fail, then make it pass
+
 Now, I said in my abstract for this presentation, I said that tests should either pass or fail, not both.
 
 And I stand by that.
@@ -92,6 +98,8 @@ A flaky test somehow feels like that to me is you're not on stable ground any ti
 
 You still have a flaky test.
 
+## Red, Green, Refactor
+
 Now, before we start looking for sources of flakiness sources of randomness, I want to start by looking at testing best practices.
 
 Now here suppose that we want to write a function that accepts a list and source that list.
@@ -110,7 +118,7 @@ And then in an assertion where we're, we're capturing the, the result of the fun
 
 And just to slightly shorten this instead of comparing objects with names and positions.
 
-We're, we're mapping this to as a sequence of tules if you like.
+We're, we're mapping this to as a sequence of tuples if you like.
 
 So we still get to see the, the position and the name and we can check their order.
 
@@ -192,7 +200,7 @@ We don't want to give them inputs that match our expectations for free.
 
 Essentially what we have, what we have here.
 
-Go away.
+[Go away.]
 
 What we have here is a test that passes by fluke, not by, not by hard work, not by honest toil.
 
@@ -224,11 +232,11 @@ Now, if I change this to the list sort, here, here's our original naive list sor
 
 Here's an actual implementation which receives something as input, it copies it, it calls the sort function.
 
-It has a compa a comparison function.
+It has a comparison function.
 
 very, very basic, I mean, it's really building on top of javascript primitives here, but it is adding that that functionality that lets you pass in an array and the field you want to sort it by.
 
-So so if we change this, so that instead of using the naively sort, it uses the actual implementation.
+If we change this, so that instead of using the naive sort, it uses the actual implementation.
 
 Now we go from a failing test suite to a passing test suite in test driven design.
 
@@ -250,13 +258,13 @@ There was functionality missing.
 
 In fact, in this case, all of the functionality was missing.
 
-But there are nuances that, you know, this is a sledgehammer example.
+~But there are nuances that, you know, this is a sledgehammer example.~
 
-I'm trying to make a point here.
+~I'm trying to make a point here.~
 
-There are, there are ways that you could be adding small, you know, smaller features to that list sort of function.
+~There are, there are ways that you could be adding small, you know, smaller features to that list sort of function.~
 
-And that if you go and write the implementation or write the test, you don't see that test fail first, then how can you trust when it's green?
+~And that if you go and write the implementation or write the test, you don't see that test fail first, then how can you trust when it's green?~
 
 So red, green reactor, that final step, we don't need to spend long on that.
 
@@ -268,9 +276,9 @@ You have the freedom to refactor your code that is to change the, the implementa
 
 That's what refactoring is.
 
-So we don't need to spend long on that.
+~So we don't need to spend long on that.~
 
-That's not the point of today.
+~That's not the point of today.~
 
 But I wanted to start with these testing, best practices.
 
@@ -282,6 +290,8 @@ They're there to catch you when you break stuff.
 
 You want to test your safety net.
 
+## Example: unmanaged asynchrony (timing issues)
+
 In this template, we've got a code block.
 
 And let me show you in, in the browser.
@@ -290,11 +300,11 @@ This is what it looks like.
 
 The first thing I'm thinking when I look at this is, wouldn't it be nice to have a bit of syntax highlighting and there's lots of good libraries out there that, that can do this.
 
-I've chosen highlight dot Js and I've chosen to create a modifier for this.
+I've chosen Highlight.Js and I've chosen to create a modifier for this.
 
 Now it's an app modifiers.
 
-It's in a file called highlighter dash eager.
+It's in a file called `highlighter-eager`.
 
 You, you'll see why in a moment we're going to go through several variations of this modifier.
 
@@ -320,7 +330,7 @@ And if we wanted to write a test for that, it could look something like this we'
 
 And here I'm just saying, I'm just looking up that element by ID and asserting that it has the hljs class.
 
-, remember that's not a class that I've added myself.
+Remember that's not a class that I've added myself.
 
 It's a class that's added when the modifier kicks in.
 
@@ -330,7 +340,7 @@ So that passes great.
 
 This isn't a Flicky test.
 
-, let's make it into a flaky test for, for the purposes of demonstration.
+Let's make it into a flaky test for, for the purposes of demonstration.
 
 Now, this isn't entirely contrived.
 
@@ -400,9 +410,7 @@ I hope I'm selling this to you.
 
 But let's see what happens to our test.
 
-00 Our text is broken.
-
-Yeah.
+Our test is broken. Yeah.
 
 So we've made an improvement in terms of performance, but we've broken our tests.
 
@@ -426,9 +434,7 @@ So that's not great.
 
 So my, my hunch was that this assertion was failing because when we, when we visit the page, it takes a moment for highlight Js to initialize and to change to change the dom and just by waiting a little bit, we can give highlight Js time to do its thing.
 
-This is not a good solution because I've arbitrarily chosen a number that's high enough.
-
-500.
+This is not a good solution because I've arbitrarily chosen a number that's high enough: 500.
 
 I could maybe get away with a smaller number.
 
@@ -440,9 +446,7 @@ Let's try 50.
 
 50 worked.
 
-50 worked today.
-
-But it might not work tomorrow.
+50 worked today. But it might not work tomorrow!
 
 Whatever number you choose, there's always a risk that it works today, but not tomorrow.
 
@@ -452,7 +456,7 @@ A source of flakiness.
 
 It's something that might hurt you later.
 
-Now let me show you this timer function.
+Now let me show you this `timeout` function.
 
 So this is returning a promise.
 
@@ -462,17 +466,17 @@ you pass in a delay and it resolves when that period has elapsed.
 
 I've also got this method here which calls time out, but it does a little bit of adds a little bit of randomness to decide how much of a delay you want it to have.
 
-So let me switch this instead of using time out, let's switch to flake town.
+So let me switch this instead of using time out, let's switch to `flakeTime`.
 
-And here, I'm gonna give it a label of test probability 0.5.
+And here, I'm gonna give it a label of `'test'`, `'probability': 0.5`.
 
 So this means that half of the time when this runs, it's not going to add a delay at all.
 
-And the other half of the time it's going to add a 302nd, sorry 300 millisecond delay.
+And the other half of the time it's going to add a 30 second, sorry 300 millisecond delay.
 
 So we're introducing a bit of randomness intentionally here.
 
-Now, I also have a version of the, the highlighter modifier which also uses flake time.
+Now, I also have a version of the highlighter modifier which also uses flake time.
 
 And again, this has got this 0.5% probability.
 
@@ -482,9 +486,7 @@ So I'm gonna run this a few times and I'm also going to bring up the console tes
 
 Oh yes.
 
-There's one more change I need to make here, which is we're gonna use lazy.
-
-What was it called the invariable delay.
+There's one more change I need to make here, which is we're gonna use `lazy-`...What was it called... `-variable-delay`.
 
 So we're using this modifier which as well as doing the asynchronous import, it just adds in a random delay of possibly 300 milliseconds or possibly nothing.
 
@@ -498,15 +500,15 @@ So by adding this randomness, we're now simulating what it would be like for thi
 
 but yeah, in general, the, the intention here is to intentionally make this into a flaky test.
 
-So there it's feeling, feeling, passing, failing, passing, failing, failing, failing, failing, failing, I could do this all day.
+So there it's failing, failing, passing, failing, passing, failing, failing, failing, failing, failing, I could do this all day.
 
 This is so fun.
 
 This is slightly contrived.
 
-I admit I'm intentionally making a feeling a Flicky test.
+I admit I'm intentionally making a feeling a Flaky test.
 
-Now, let's take our variable delay and we're going to give this a probability of one which is to say, always, always flick out and this one, we're gonna give a probability of zero.
+Now, let's take our variable delay and we're going to give this a probability of 1 which is to say, always, always flake out and this one, we're gonna give a probability of zero.
 
 So this is never gonna wait.
 
@@ -516,7 +518,7 @@ So import was delayed by 300 test was not delayed.
 
 We have a fail test, failing test, failing test, failing test.
 
-It feels every time now, ok?
+It fails every time now, ok?
 
 And this puts us on a footing where we can actually diagnose this problem and fix it.
 
@@ -527,6 +529,8 @@ If you think you found a solution for that flaky test, even seeing it, seeing th
 But now we know that this test is failing every time and if we can make a change, not a change to these arbitrary delays, but a change to our actual implementation code.
 
 If we can introduce that change and see this pass every time, then we know we've eliminated the the source of randomness, the source of flakiness in our, in our application and in our tests.
+
+## The fix: introduce a test-waiter
 
 I think it's time to actually look for the solution now.
 
@@ -564,7 +568,9 @@ Yeah, I feel confident now that I can remove this source of randomness, I feel c
 
 I can take away that sort of randomness and, feel confident that this is no longer a flaky test.
 
-I've got a, a test module here with tests named Do do, oh Sorry, there's, there's only one do.
+## Randomizing your test suite with Qunit
+
+I've got a, a test module here with tests named Do re mi so fa la ti ~do, oh Sorry, there's, there's only one do~.
 
 Now I just want to demonstrate because this is, this is a sort of known order from from in music.
 
@@ -572,15 +578,15 @@ The order that these tests run matches the order that they've been declared in t
 
 So if I refresh this, you can't even see that anything's happening really just it's rerunning the tests in the same order every single time.
 
-Now Q unit has a feature a configuration option called seed.
+Now Qunit has a feature a configuration option called `seed`.
 
 And this lets you run the tests in a seeded random order.
 
-Let me just demonstrate, I can actually interact with this via query paras here.
+Let me just demonstrate, I can actually interact with this via query params here.
 
-So if I just add a query param and call it seed with, with nothing else there, look at that T came first T rafa do, it's completely randomized.
+So if I just add a query param and call it seed with, with nothing else there, look at that Ti came first. it's completely randomized.
 
-And if I refresh this, it runs in a different order again, each time I refresh the order that the tests, the test cases are run changes.
+And if I refresh this, it runs in a different order again, each time I refresh the order that the test cases are run in changes.
 
 Now simply the presence of the seed configuration option like seed true, randomizes things.
 
@@ -588,13 +594,13 @@ The other thing you can do though is you can set it to a value.
 
 And here, I'm just going to choose.
 
-Drew was here, Drew was where Drew was here.
+"Drew was ere", Drew was where Drew was here.
 
 It can be any arbitrary value, but this is, it's random in the sense, it's not the same order that they were declared in the file.
 
 But now if I refresh this, it's the same every time, right?
 
-As long as we're using, as long as we're using the same seed, we get the same random order.
+As long as we're using the same seed, we get the same random order.
 
 Now, actually, there's something you can do.
 
@@ -614,9 +620,9 @@ This is really easy to do.
 
 I'm just going to show you how I did that test helper.
 
-So here we're adding to the Q unit URL config the seat.
+So here we're adding to the Qunit URL config the seat.
 
-This is the, the feature that already exists in Q unit label is the label and then we've got a tool tip as well.
+This is the, the feature that already exists in Qunit label is the label and then we've got a tool tip as well.
 
 And it's as simple as that.
 
@@ -643,6 +649,8 @@ Let's say this particular order is interesting to us.
 Just click that link and now it's going to run in the order every time until I remove that seed query para.
 
 So that's, that's useful if you want to randomize the order that your tests run in.
+
+## Example: leaking state
 
 We're going to have a look now at an example where leaking state between tests can cause a, a test to fail under some circumstances and pass under others.
 
@@ -732,7 +740,7 @@ And so we can actually, although this is enabled by default, we can turn this of
 
 And the way we can do it is by opening the just help her.
 
-And it's just AAA setting that you can set on Q unit dot config reorder, set it to false.
+And it's just AAA setting that you can set on Qunit dot config reorder, set it to false.
 
 And now if we run this again, each time I run it, they always run 123 in that order.
 
@@ -764,13 +772,15 @@ In any case, don't see the flaky test as necessarily being the thing that's at f
 
 It's a bad actor and in this case, test two is also a bad actor.
 
+## The fix: constrain 'global state' to the lifetime of the test
+
 I hope that this is illustrated why global variables are bad and why you shouldn't use them.
 
 But nevertheless, there is a, there is a way to fix this which would be to say, instead of interacting with the window object, which is a global, a global piece of state.
 
 What we could do is we could say that within each test, we're going to provide a mock version of the window object and that mock version will only its lifetime will be constrained within the lifetime of the test.
 
-There's an add on from curb strike which makes this really easy.
+There's an add on from CrowdStrike which makes this really easy.
 
 And that is called Ember browser services.
 
