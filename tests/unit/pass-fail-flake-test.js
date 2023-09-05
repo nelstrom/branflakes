@@ -11,6 +11,6 @@ module('Illustrative test', function () {
   });
 
   test('flakes', function (assert) {
-    assert.true(Math.random() > 0.5);
+    assert.true(Math.random() < 0.5);
   });
 });
