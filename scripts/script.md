@@ -36,7 +36,7 @@ Fixing a flaky test can be hard. You don't want to be side-tracked into working 
 
 Here's what to do: find the flaky test and skip it for now. Create a ticket in Jira. Come back and fix it at a later date. Then get back to your critical path and get that feature shipped.
 
-But here's the important part: you do need to make time to come back later and investigate why the test was failing. Approach it with a cool head. Treat it as a puzzle. A two-pipe problem.
+But here's the important part: you do need to make time to come back later and investigate why the test was failing. Approach it with a cool head. Treat it as a puzzle. A three-pipe problem.
 
 We write tests so as to give ourselves a safety harness. A good test suite should give you confidence. It should give you the freedom to move fast, knowing that if you've broken something, the test suite will let you know. 
 
