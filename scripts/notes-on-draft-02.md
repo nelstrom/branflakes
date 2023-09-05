@@ -7,6 +7,10 @@
 
 ## Strategy: skip the flaky test for now, create a ticket to come back and fix it later
 
+A flaky test is holding CI to ransom.
+
+'Ransom' and 'Random' differ by only one letter. d/s
+
 > If a test is randomly failing, it is causing more chaos than, than it can earn by testing the thing.
 
 > Flaky tests create chaos, not confidence
