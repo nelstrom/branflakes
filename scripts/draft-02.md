@@ -1,3 +1,5 @@
+## What is a flaky test?
+
 Well, here we have a very basic test suite with three tests.
 
 This test should always pass.
@@ -48,6 +50,8 @@ It's not necessarily going to be in your test suite.
 
 It could be in your application code.
 
+## How flaky tests on CI can mess with your team's workflow
+
 The trouble with a flaky test usually it's, well, first of all, it's not as easy to spot as this, but also what, what you'll often find is that the test passes 99% of the time.
 
 And that one time that it fails is always going to be the worst possible timing if you ship this code into production and it runs on C I, it might be that it passes and you get your pull request merged and then, you know, lots of other people who work and get their pull requests merged and then there's going to be a day when you're working on some feature that needs to be delivered, you've got a deadline and you're, you're working hard, you publish, you wait for C I and all the work that you've been doing is fine.
@@ -63,6 +67,8 @@ What you have really?
 When you ship a flaky test into production, you don't know it, but you have a ticking time bomb, it's gonna blow up at some point.
 
 It's probably going to do it at the worst possible timing.
+
+## Strategy: skip the flaky test for now, create a ticket to come back and fix it later
 
 Now, if you find yourself in that position,, fixing flaky tests can be hard.
 
@@ -92,7 +98,9 @@ Don't blame anyone.
 
 Skip it.
 
-Move on with your life, get your future shipped, get your bug fixed, come back and fix the flaky test another day.
+Move on with your life, get your feature shipped, get your bug fixed, come back and fix the flaky test another day.
+
+## Red, Green, Refactor
 
 Now, before we start looking for sources of flakiness, sources of randomness, I want to start by looking at testing best practices.
 
@@ -294,6 +302,8 @@ OK?
 
 You want to test your safety net.
 
+## Strategy: make it fail, then make it green
+
 Now, I said in my abstract for this presentation, I said that tests should either pass or fail, not both.
 
 And I stand by that.
@@ -338,7 +348,11 @@ A flaky test somehow feels like that to me is you're not on stable ground any ti
 
 But neither one is good.
 
-You still have a flaky test, broadly speaking, flaky tests fall into one of two categories.
+You still have a flaky test!
+
+## Categories of flaky test: timing issues, leaky state, or both
+
+Broadly speaking, flaky tests fall into one of two categories.
 
 One of them is timing issues and the other is leaky state.
 
@@ -360,7 +374,10 @@ For each of these, I have some strategies for how to diagnose the problem.
 
 But the solutions that I present aren't necessarily going to be solutions that work for you.
 
-This talk is more about giving you strategies for thinking about Flicky tests and for diagnosing the problems, OK?
+This talk is more about giving you strategies for thinking about flaky tests and for diagnosing the problems, OK?
+
+## Example: timing issues
+
 
 In this template, we've got a code block.
 
@@ -410,7 +427,7 @@ So that passes.
 
 Great.
 
-This isn't a Flicky test.
+This isn't a flaky test.
 
 Let's make it into a flaky test for, for the purposes of demonstration.
 
@@ -741,6 +758,8 @@ And that's what Ember test waiters does.
 It lets you tell Ember something asynchronous is happening and I need you to pause the test until this promise is finished loading.
 
 OK?
+
+## Example: leaking state
 
 We're going to have a look now at an example where leaking state between tests can cause a, a test to fail under some circumstances and pass under others.
 
