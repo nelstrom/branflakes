@@ -156,3 +156,39 @@ Instead of hoping for your flaky test to pass, here's my advice: be methodical, 
 2. Start by trying to make it fail every time
 3. Then make it pass every time
 
+## Categories of flaky test: timing issues, leaky state, or both
+
+The reasons for a test being flaky can fall into two categories: timing issues, or leaky state.
+
+There's a third category: all of the above!
+
+
+We're going to look at one example of a test that is flaky because of a timing issue. And one example of a test that's flaky because of leaky state.
+
+In each case, we'll use the same methodology: we'll find a way to turn the flaky test into a failing test, then we'll find a way to make the test pass.
+
+## Example: timing issues
+
+* show the template without using a modifier
+* show it in the browser
+* how about we add syntax highlighting?
+* we'll use highlight.js
+* here's a modifier that applies syntax highlighting to the element it's used on
+* we can use it like this
+* show it in the browser: we have syntax highlighting
+* show the source: classes and markup added
+* if we wanted to test this functionality, we could do it like this
+* this test passes
+* is it flaky? We can't be sure, but hopefully not.
+* let's change that
+
+* static import means highlight.js is always included in the bundle
+* our users have to pay that tax, whether or not they use that functionality
+* using a dynamic import means highlight.js will be excluded from the main bundle, and loaded on demand when needed
+* demonstrate network tab with eager modifier: no additional scripts loaded, highlighting applies instantly
+* demonstrate network tab with lazy modifier: additional scripts are loaded, highlighting applies after a momentary delay
+* from a performance point of view, this is an improvement
+* but we've broken our tests!
+
+* show tests
+* describe the marble run
