@@ -71,6 +71,14 @@ Note: I don't feel any need to change the example here. I think it illustrates t
 
 Note: Ember's 'settled' state is a kind of global state. If you squint at the solution, it's almost as though the timing problem was a kind of leaking state...
 
+https://javascript.info/modules-dynamic-imports
+
+> Although `import()` looks like a function call, it’s a special syntax that just happens to use parentheses (similar to `super()`).
+
+> So we can’t copy `import` to a variable or use `call`/`apply` with it. It’s not a function.
+
+
+
 ## Example: leaking state
 
 Code example: could be improved? Setting global state is ok-ish for this demonstration. Setting the global state in a model hook feels a bit old-time Ember. Especially since the Router is slated for improvement. What if I change the example so that the global variable is changed when a component is mounted instead?
