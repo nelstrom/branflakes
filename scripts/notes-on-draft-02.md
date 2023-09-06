@@ -69,6 +69,8 @@ Use a diagram to visualize the steps in each 'timeline'. Visualize adding a dela
 
 Note: I don't feel any need to change the example here. I think it illustrates the point perfectly well. I just need to get to the point faster, and introduce the 'mental model' of the marble run sooner.
 
+Note: Ember's 'settled' state is a kind of global state. If you squint at the solution, it's almost as though the timing problem was a kind of leaking state...
+
 ## Example: leaking state
 
 Code example: could be improved? Setting global state is ok-ish for this demonstration. Setting the global state in a model hook feels a bit old-time Ember. Especially since the Router is slated for improvement. What if I change the example so that the global variable is changed when a component is mounted instead?
@@ -84,3 +86,4 @@ When introducing ember-browser-services:
 1. First: replace all occurrences of `window` with `this.window` (implementation AND tests)
 2. Then: add `setupBrowserFakes(hooks, { window: true })`, which is where we actually switch out the real Window for a mock Window
 
+Note: The issue with global state outliving the test is kind of a timing issue. Is it fair to say that issues with leaky state are ALSO issues with timing? Maybe there's only one category of flaky test after all!
