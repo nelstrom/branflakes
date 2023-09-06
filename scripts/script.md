@@ -169,26 +169,48 @@ In each case, we'll use the same methodology: we'll find a way to turn the flaky
 
 ## Example: timing issues
 
-* show the template without using a modifier
-* show it in the browser
-* how about we add syntax highlighting?
-* we'll use highlight.js
-* here's a modifier that applies syntax highlighting to the element it's used on
-* we can use it like this
-* show it in the browser: we have syntax highlighting
-* show the source: classes and markup added
-* if we wanted to test this functionality, we could do it like this
-* this test passes
-* is it flaky? We can't be sure, but hopefully not.
-* let's change that
+### Simple modifier with static imports
 
-* static import means highlight.js is always included in the bundle
-* our users have to pay that tax, whether or not they use that functionality
-* using a dynamic import means highlight.js will be excluded from the main bundle, and loaded on demand when needed
-* demonstrate network tab with eager modifier: no additional scripts loaded, highlighting applies instantly
-* demonstrate network tab with lazy modifier: additional scripts are loaded, highlighting applies after a momentary delay
-* from a performance point of view, this is an improvement
-* but we've broken our tests!
+In this template, we've got a code block. Here's how it looks when rendered in the Browser.
 
-* show tests
+The first thing I'm thinking when I look at this is: can we have syntax highlighting please?
+
+There's loads of open source libraries out there that we could use. I've chosen highlight.js.
+
+To integrate it, I've created a modifier. The modifier recieves an element as an argument, then applies syntax highlighting to the element.
+
+We can use the modifier by calling it in the 'element-space' of the element where we want to apply syntax highlighting. And here's how it looks in the Browser now. It works!
+
+Let's take a look at the markup: you can see that some classes have been added to the original element, and the content within has been enhanced with span elements and their corresponding styles.
+
+And if we wanted to test that functionality, it might look something like this:
+
+1. we're gonna visit that route
+2. then we'll look up the element by `id` and assert that it has the class applied by highlight.js
+
+Let's run the test... and it passes.
+
+Is it flaky? We can't know for sure, but... let's hope not!
+
+### Simple modifier with dynamic imports
+
+The way that we've implemented this modifier has one notable downside: we've inflated our bundle by adding the highlight.js library. Our users have to pay that tax, even if they never visit a page that uses this functionality.
+
+Here's an alternative implementation of the modifier, which uses a dynamic import.
+
+I want to show you the before and after, so you can see the difference. There's two things I want to draw your attention to:
+
+1. the `JS` documents loaded in the Network panel
+2. the highlighted text itself
+
+First, we'll use the original modifier with the static imports. If I load the app's homepage, it loads a bunch of scripts. When I navigate to the route that uses the syntax highlighting functionality, we see highlighted text. No extra scripts are loaded.
+
+Next, we'll switch to the modifier with the dynamic imports. Again, I'll load the app's homepage, and it loads a bunch of scripts. Watch when I navigate to the route with the syntax highlighting. We get a couple of new scripts appearing in the network tab. So we're loading the library on demand, only paying the cost when we actually need it.
+
+There's another thing to note here. I'll do a slow-motion replay... notice that there's a flash of unhighlighted text? It takes a moment to fetch the highlight.js library and to initialize it. It's barely noticable unless I slow down time.
+
+From a performance point of view, this is an improvement
+
+But... we've broken our tests!
+
 * describe the marble run
