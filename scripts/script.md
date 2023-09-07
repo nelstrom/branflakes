@@ -213,4 +213,61 @@ From a performance point of view, this is an improvement
 
 But... we've broken our tests!
 
-* describe the marble run
+### Marble runs
+
+To understand what's going on here, I find it helpful to visualize a marble run.
+
+(show a picture of a marble run)
+
+In this example, we have a splitter at the top. Drop in your first marble, the splitter will send it to the left. Drop in a second marble, the splitter will send it to the right. Then left again, right again, and so on. From there onwards, each marble is on its own track. It's own timeline. Each marble is independent. It's going to roll with gravity until it reaches the end of its track.
+
+Suppose that the two marble paths differ slightly in length. Lets say the left track is shorter, and the right track is a bit longer. If we set two marbles in motion at the same time, the splitter sends one to the left, and the other to the right. Intuitively, you expect the one on the left to finish first. It's got the shorter track.
+
+And your intuition is right! The first time, at least. 
+
+But the beauty of marble runs is that there's always a little bit of randomness. Repeat the experiment 10 times, and maybe you'll find that one of those runs defies your expectations.
+
+Can you see where I'm going with this?
+
+Remember when we were talking about red, green, refactor, I showed you an example of a test where our original list was already sorted? The natural order, the order in which our list was declared, gave us a passing test, even before we had implemented the functionality.
+
+I'd like to draw an analogy here: the 'natural order' is for the marble on the shortest track to finish first.
+
+With the list sorting example, we then switched things up so that the order in which our list was declared wasn't sorted to begin with. That made our test fail, and forced us to do the actual work of implementing the functionality.
+
+In our marble run, we can adjust the length of the tracks so as to influence the probabilities of which marble finishes first.
+
+
+### Visualising
+
+Ok, enough playing with marbles! Let's get back to the code.
+
+If we place our test code and our modifier side by side, and squint a bit... you can almost imagine that we have a marble run with two seperate tracks. Let's call them two independant 'timelines'.
+
+First, let's consider our original modifier with the static imports:
+
+1. the 'Test timeline' kicks things off by visiting the route
+2. that kicks off the 'App timeline', which loads the route, and renders the template, causing the modifier code to run
+3. in the 'Test timeline', after waiting a bit, we make an assertion about the state of the DOM. It passes.
+
+Now let's consider our new modifier with the dynamic imports:
+
+1. again, the 'Test timeline' kicks things off by visiting the route
+2. that kicks off the 'App timeline', which loads the route, and renders the template, causing the modifier code to run. We have some asynchrony in this timeline, which means it takes a bit longer than before.
+3. in the 'Test timeline', after waiting a bit, we make an assertion about the state of the DOM. It fails.
+
+One way of looking at this is to say: if we could just make the 'Test timeline' wait a bit longer, we'd have a passing test. Let's try that!
+
+We'll add a delay of 500 milliseconds. Run the test... and it passes!
+
+I wonder if we could use a smaller delay? Let's try 10 milliseconds... That fails!
+
+50 milliseconds? It passes!
+
+I don't recommend doing this. For a start: it makes your tests run slower, and we don't want that. But also: 50 milliseconds may work today, but it might not work tomorrow. All we've done is alter the probability of this test passing. It's still a flaky test. Ship this to CI, and you have a ticking time bomb... 
+
+We can't leave this to chance.
+
+Let's adapt our strategy here. Putting a delay in the test increases the chances of our test passing. Instead, let's put a delay in the modifier, so as to increase our chances of the test failing. For practical purposes, this test now fails every time.
+
+> So suppose that we, we introduce some kind of switch that says, OK, both marbles are going to do their own thing, but one of the marbles is gonna reach a gate, it's gonna stop and that gate is going to open when the other marble reaches its completion.
