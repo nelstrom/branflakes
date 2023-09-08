@@ -77,6 +77,11 @@ https://javascript.info/modules-dynamic-imports
 
 > So we can’t copy `import` to a variable or use `call`/`apply` with it. It’s not a function.
 
+Marble run splitter example:
+https://youtu.be/7wnP6lzkzl0?si=U_YDLkxafduP0Hix&t=37
+
+Marble run kit parts:
+https://isaacstreasures.com/cdn/shop/products/image_6cc00152-74cf-42b7-9b3b-b477100c63b3_1024x1024@2x.jpg?v=1644589323
 
 
 ## Example: leaking state
