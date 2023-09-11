@@ -270,4 +270,18 @@ We can't leave this to chance.
 
 Let's adapt our strategy here. Putting a delay in the test increases the chances of our test passing. Instead, let's put a delay in the modifier, so as to increase our chances of the test failing. For practical purposes, this test now fails every time.
 
-> So suppose that we, we introduce some kind of switch that says, OK, both marbles are going to do their own thing, but one of the marbles is gonna reach a gate, it's gonna stop and that gate is going to open when the other marble reaches its completion.
+### Bridging the timelines
+
+Up until now, our timelines have been independent. What if we could link them? What if we could make it so that the marble we want to finish last, always finishes last?
+
+Suppose that we introduce some kind of switch in our marble run. One of the marbles is gonna reach a gate, which makes it stop. And that gate is going to stay closed until the other marble reaches the end of its track. Upon which the gate opens, and the stopped marble can continue on its way. By doing this, we could guarantee the order in which the marbles finish, rather than leaving it to chance.
+
+Enter: ember-test-waiters.
+
+We can fix this timing issue by wrapping the asynchronous portion of our code in a call to `waitForPromise()`, which comes from the ember test waiters package.
+
+Now the test passes. And just to really prove this point, I'm going to artificially increase the delay to something really long: 5 seconds. Now it's a very slow test, but it passes!
+
+Having tested my test, I feel confident that the timing issue is fixed. It's safe now to remove the artificial delay.
+
+

@@ -80,6 +80,9 @@ https://javascript.info/modules-dynamic-imports
 Marble run splitter example:
 https://youtu.be/7wnP6lzkzl0?si=U_YDLkxafduP0Hix&t=37
 
+Marble run gate example:
+https://youtu.be/OL_E7q3NU0I?si=BtUCckFdtdOnDTyP&t=15
+
 Marble run kit parts:
 https://isaacstreasures.com/cdn/shop/products/image_6cc00152-74cf-42b7-9b3b-b477100c63b3_1024x1024@2x.jpg?v=1644589323
 
