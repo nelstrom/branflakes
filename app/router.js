@@ -10,4 +10,5 @@ Router.map(function () {
   this.route('one');
   this.route('two');
   this.route('three');
+  this.route('information');
 });
