@@ -26,6 +26,6 @@ module('Acceptance | global variable', function (hooks) {
     // let window = this.owner.lookup('service:browser/window');
 
     // This test fails when it runs after 'Visit route two'
-    assert.strictEqual(window.myGlobalVariable, 'Hello!');
+    assert.strictEqual(window.myGlobalVariable, undefined);
   });
 });

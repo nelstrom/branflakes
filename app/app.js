@@ -4,7 +4,7 @@ import loadInitializers from 'ember-load-initializers';
 import config from 'branflakes/config/environment';
 import { service } from '@ember/service';
 
-window.myGlobalVariable = 'Hello!';
+// window.myGlobalVariable = 'Hello!';
 
 export default class App extends Application {
   @service('browser/window') window;
