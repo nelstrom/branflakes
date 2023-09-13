@@ -319,3 +319,18 @@ Now let's consider the implementation where we introduced the dynamic imports, b
 
 When we wrap our dynamic imports in `waitForPromise()`, we create a test waiter for the chunk of async work that we've introduced. When we `await visit()`, it now waits for our test waiter to reach a settled state. And now the test passes again.
 
+## Example: Leaky state
+
+We're going to have a look now at an example where a test fails under some circumstances and pass under others. The cause this time being leaky state.
+
+Now global variables are a thing you want to avoid in general, but I'm deliberately flouting that advice here to make a simple demonstration. Please indulge me by suspending your disbelief for a few minutes.
+
+Here we've got three routes.
+
+* In route one, we're setting `myGlobalVariable` to the string `'hello'`
+* In route two, we're setting it to a different string `'hi'`
+* In route three, we don't alter that global variable
+
+Let's take a look in the browser. I'll set up a live expression so that we can see the value of `myGlobalVariable`. As I visit route one, it says `'hello'`. As I visit route two, it says `'hi'`. And when I visit route three, it doesn't change.
+
+
