@@ -103,3 +103,14 @@ When introducing ember-browser-services:
 2. Then: add `setupBrowserFakes(hooks, { window: true })`, which is where we actually switch out the real Window for a mock Window
 
 Note: The issue with global state outliving the test is kind of a timing issue. Is it fair to say that issues with leaky state are ALSO issues with timing? Maybe there's only one category of flaky test after all!
+
+Permutations:
+
+| # | First | Second | Third | Result |
+| 1 | One | Two | Three | Fail |
+| 2 | One | Three | Two | Pass |
+| 3 | Two | One | Three | Pass |
+| 4 | Two | Three | One | Fail |
+| 5 | Three | One | Two | Pass |
+| 6 | Three | Two | One | Pass |
+

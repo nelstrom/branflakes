@@ -282,6 +282,40 @@ We can fix this timing issue by wrapping the asynchronous portion of our code in
 
 Now the test passes. And just to really prove this point, I'm going to artificially increase the delay to something really long: 5 seconds. Now it's a very slow test, but it passes!
 
+--- 
+
 Having tested my test, I feel confident that the timing issue is fixed. It's safe now to remove the artificial delay.
 
+How does `waitForPromise()` work?
+
+Let's take a look at our test code:
+
+```
+await visit('/three')
+```
+
+It's visiting a URL and awaiting. What's it waiting for?
+
+The `visit()` test helper waits for the app to reach a 'settled' state.
+
+To explain, I'm going to have to do a bit of hand-waving, so as to not get too bogged down in the details.
+
+First, let's consider the initial implementation of the modifier, with the static imports. We didn't need any special handling for asynchronous code here, but asynchronous stuff was happening. Think about what happens when you visit a URL:
+
+1. The route matching the URL is activated
+2. It's model hook runs (which may be asynchronous)
+3. The template renders (which may be asynchronous)
+4. Our modifier runs
+
+Somehow, the test knows not to run the assertion until the asynchronous parts are completed. That's because the model hooks and rendering process are managed by Ember, and the framework has this concept of settledness built-in.
+
+Each time a chunk of asynchronous work begins, it signals that it's not settled. And when that chunk of work completes, it signals that it has settled.
+
+We can have lots of different asynchronous things happening at the same time. Imagine that there's a boolean flag for each one. All of these flags are bundled up together, creating a global derived state. If there's one single flag that's unsettled, the global state is unsettled. When all flags are settled, the global state is settled.
+
+And that's what we're waiting for when we call `await visit()`.
+
+Now let's consider the implementation where we introduced the dynamic imports, breaking the tests. We introduced a chunk of work that was asynchronous, but without wiring it up to the test waiters. When we `await visit()`, the test waits for a settled state, which happens when the model hook has loaded, and the template has rendered. There's still async work happening, but it's in a blind-spot for our tests. The assertion happens before the DOM has *truly* settled, and our test fails.
+
+When we wrap our dynamic imports in `waitForPromise()`, we create a test waiter for the chunk of async work that we've introduced. When we `await visit()`, it now waits for our test waiter to reach a settled state. And now the test passes again.
 
