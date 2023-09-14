@@ -9,28 +9,12 @@ setApplication(Application.create(config.APP));
 
 setup(QUnit.assert);
 
-// QUnit.config.reorder = false;
-
-// Adding a checkbox for the 'reorder' option doesn't work!
-// QUnit.config.urlConfig.push({
-//   id: 'reorder',
-//   label: 'Hoist recently failed tests',
-//   tooltip: 'When checked, tests that failed on the previous run will run first',
-// });
+QUnit.config.reorder = false;
 
 QUnit.config.urlConfig.push({
   id: 'seed',
   label: 'Randomize',
   tooltip: 'When checked, tests run in a random order',
 });
-
-if (QUnit.config.seed) {
-  const { origin, pathname, search } = window.location;
-  const params = new URLSearchParams(search);
-  params.set('seed', QUnit.config.seed);
-  const link = new URL(`${origin}${pathname}?${params}`);
-  console.log('Using seed: ', QUnit.config.seed);
-  console.log('Click link to re-run tests with same seed: ', link.href);
-}
 
 start();
