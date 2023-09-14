@@ -1,9 +1,7 @@
 import Route from '@ember/routing/route';
-import { service } from '@ember/service';
-export default class OneRoute extends Route {
-  // @service('browser/window') window;
 
+export default class OneRoute extends Route {
   model() {
-    window.myGlobalVariable = 'Hello!';
+    window.myGlobalVariable = 'Uno';
   }
 }
