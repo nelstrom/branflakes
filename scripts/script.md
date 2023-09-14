@@ -321,16 +321,124 @@ When we wrap our dynamic imports in `waitForPromise()`, we create a test waiter 
 
 ## Example: Leaky state
 
-We're going to have a look now at an example where a test fails under some circumstances and pass under others. The cause this time being leaky state.
+Watch this: I've got a test module here containing three tests. One of them fails.
 
-Now global variables are a thing you want to avoid in general, but I'm deliberately flouting that advice here to make a simple demonstration. Please indulge me by suspending your disbelief for a few minutes.
+I'll run the tests again. They all pass.
 
-Here we've got three routes.
+Run them again. One of them fails.
 
-* In route one, we're setting `myGlobalVariable` to the string `'hello'`
-* In route two, we're setting it to a different string `'hi'`
-* In route three, we don't alter that global variable
+Again... they all pass.
 
-Let's take a look in the browser. I'll set up a live expression so that we can see the value of `myGlobalVariable`. As I visit route one, it says `'hello'`. As I visit route two, it says `'hi'`. And when I visit route three, it doesn't change.
+And so on...
 
+Let's take a closer look. The test that fails is number 3. If I run it in isolation, it passes every time. But when I run it alongside the other tests, it sometimes fails.
 
+I want to take a moment to explain why it's flip-flopping between a pass and fail. Qunit has a `reorder` feature, which:
+
+> Allow re-running of previously failed tests out of order, before all other tests.
+
+It's enabled by default. When we run our tests, test 3 fails. Next time, Qunit reorders the tests so as to run test 3 first. In this case it passes. So on the next run, the natural order applies again, producing a failing test. And so on...
+
+We can turn off the `reorder` feature by opening up the `test-helper` file and setting:
+
+```
+Qunit.config.reorder = false;
+```
+
+Now when we run our tests, we get a failure every time. That's better! We've gone from a flaky test, to a failing test.
+
+I've got one more Qunit tip I want to share with you. There's another configuration option called `seed`:
+
+> Enable randomized ordering of tests.
+
+In my `test-helper` file, I've added some configuration that adds a checkbox to the test runner UI, enabling me to toggle this setting.
+
+Let's try it out!
+
+Notice the `seed` query param in the URL here. Each time I refresh the page, the tests run in a different order.
+
+If you pay close attention to where test three appears in the sequence, and whether it passes or fails, you'll notice a pattern emerging.
+
+With three tests, there's only six possible sequences. Let me show you them in table form.
+
+| # | First | Second | Third | Result |
+| 1 | One | Two | Three | Fail |
+| 2 | One | Three | Two | Fail |
+| 3 | Two | One | Three | Fail |
+| 4 | Two | Three | One | Fail |
+| 5 | Three | One | Two | Pass |
+| 6 | Three | Two | One | Pass |
+
+In 4 out of 6 cases, test three fails. The cases where test three passes are the ones where it runs first.
+
+Our tests are somehow influencing each other. Ideally, we want our tests to be *atomic*: so that each one is self-contained. These tests are not atomic. We have some state leaking between tests.
+
+Let's take a look at the code. We'll start with the tests. 
+
+Each test is visiting a route, then making an assertion about the value of a global variable named `myGlobalVariable`.
+
+(I know what you're thinking: "Don't use global variables!" Yeah yeah, I know! I'm deliberately flouting that advice here because I have a point to proove. Please just suspend your disbelief for another minute or two...)
+
+Now let's take a look at each of these routes:
+
+1. Route one sets the value of `myGlobalVariable`
+1. Route two also sets the value of `myGlobalVariable`
+1. Route three does not set the value of `myGlobalVariable`
+
+Alright, so this `myGlobalVariable` seems to be leaking from one test to another. Let's run our tests a couple more times and examine the results:
+
+Test three asserts that the global variable is undefined. But when test three follows test two, the variable has the value "Dos". Let's randomize the sequence... and when test three follows test one, the variable has the value "Uno".
+
+Here's one way we could fix this test: we could make it so that when route three activates, it sets the global variable to `undefined`. Now the test passes. Let's run it again a few times, with the sequence randomized, just to be sure. Looks good.
+
+How do you feel about that solution?
+
+[pause]
+
+I don't like it! We've fixed the symptom, not the cause of the problem.
+
+Let me show you what I mean. Each test has a lifetime. It begins, stuff happens, then it ends.
+
+Test one writes a global value, then reads it again later. No surprises here, it matches our expectations.
+
+Test two also writes a global value, and reads it. No surprises.
+
+When we first looked at this example, test three was not writing the global value. It was only reading it. The value it receives depends on what happened before.
+
+We made a change so that route three does write the global value. It fixes the symptom: the failing test. But it doesn't address the root cause: which is that **the global variable outlives the lifetime of each test**.
+
+What I propose is that we try to constrain all state to the lifetime of our tests. Make sure that our global variable doesn't leak state from one test to another.
+
+Let's remove that 'fix'... and get back to our failing test.
+
+What's the simplest thing we could do that works? How about we use `beforeEach()` to make sure that we have a clean slate at the start of each test:
+
+```js
+hooks.beforeEach(function () {
+  window.myGlobalVariable = undefined;
+});
+```
+
+That seems to work. Let's randomize the sequence and run a few more times just to be sure... Are you convinced?
+
+Now, let's address the elephant in the room: I used a global variable here, to make my point. Everyone knows you're not supposed to use global variables, right? And you can see why.
+
+Global state itself is not inherently bad: in an application, you may have pieces of state that you need to access everywhere: is the current user logged in? What's their preferred locale? What permissions do they have? Things like that. As an Ember developer, you have options about how you'll track that state. You might put it in a service. You might use local storage, or session storage.
+
+Don't attach a variable directly to the `window` like I did here. But please do understand that state has a lifetime. Where ever you chose to save your state, be vigilant to ensure that its lifetime is constrained to the lifetime of each of your tests.
+
+As a general solution to this particular problem, I'd like to mention the `ember-browser-services` addon, by CrowdStrike.
+
+To integrate this:
+
+1. In the implementation code, replace all direct access to `window` with `this.window`, and make sure you've injected the service: `@service('browser/window') window`
+2. In the test code, you also have to replace direct access to `window` with `this.owner.lookup('service:browser/window')`
+
+Now, instead of asking directly for the `window`, we're asking the service to give us the `window`. When the application is running in production, the service is effectively an alias to the real window. But when running in the test environment, the service will instead give us a mock window.
+
+The final step here is to call `setupBrowserFakes(hooks, { window: true })` in our test module. Under the hood, this is effectively running `beforeEach()` and ensuring that we get a fresh instance of the mock window for each test.
+
+## Outro
+
+* If you `git blame` you can find out who wrote the test. But don't blame that name. The flaky test is the canary in the coalmine. It tells you that there is a problem, but that flaky test itself is not necessarily the cause of the problem.
+* If you take away the flaky test, you've concealed the smoke, but the fire is still there.

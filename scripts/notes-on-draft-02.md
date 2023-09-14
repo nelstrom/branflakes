@@ -114,3 +114,28 @@ Permutations:
 | 5 | Three | One | Two | Pass |
 | 6 | Three | Two | One | Pass |
 
+
+Permutations:
+
+| # | First | Second | Third | Result |
+| 1 | One | Two | Three | Fail |
+| 2 | One | Three | Two | Fail |
+| 3 | Two | One | Three | Fail |
+| 4 | Two | Three | One | Fail |
+| 5 | Three | One | Two | Pass |
+| 6 | Three | Two | One | Pass |
+
+I changed the example so that test three checks that the global variable is `undefined`. This has a few implications:
+
+1. that test now fails when run after one or two (it fails more often)
+2. that test passes when run in isolation
+3. one possible fix: in route three model hook, set the global variable to `undefined` - that makes the test pass, but it doesn't solve the underlying issue (it treats the symtom, not the cause)
+4. before introducing ember-browser-services, demonstrate fixing the root cause using `beforeEach`
+
+Idea: start this section by looking at the test runner, instead of by looking at the code.
+
+If you `git blame` you can find out who wrote the test. But don't blame that name. The flaky test is the canary in the coalmine. It tells you that there is a problem, but that flaky test itself is not necessarily the cause of the problem.
+
+## Outro
+
+Randomness is a fickle friend. It can be the cause of flakiness. But also: running your tests in a randomized order can help you to expose issues with leaky state.
