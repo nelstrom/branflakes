@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "target": "es6",
+    "baseUrl": ".",
+    "paths": {
+      "branflakes/*": ["./app/*"],
+      "branflakes/tests/*": ["./tests/*"],
+      "branflakes/config/*": ["./config/*"]
+    }
+  },
+  "exclude": [
+    ".git",
+    "bower_components",
+    "dist",
+    "node_modules",
+    "tmp",
+    "vendor"
+  ]
+}
