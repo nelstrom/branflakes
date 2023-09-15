@@ -440,5 +440,18 @@ The final step here is to call `setupBrowserFakes(hooks, { window: true })` in o
 
 ## Outro
 
-* If you `git blame` you can find out who wrote the test. But don't blame that name. The flaky test is the canary in the coalmine. It tells you that there is a problem, but that flaky test itself is not necessarily the cause of the problem.
-* If you take away the flaky test, you've concealed the smoke, but the fire is still there.
+We've looked at three possible strategies for handling a flaky test:
+
+1. Skipping the test
+2. Fixing the test
+3. Fixing the root cause
+
+At the start of this talk, I said it's fine to skip a flaky test if it's preventing your team from shipping critical updates. That's the pragmatic call. But you have to make time to come back and fix the issue later. A flaky test tells you that there's smoke. Skipping the test conceals the smoke, but you know that the fire is still burning. If you leave it to burn, it will grow, and the smoke will start showing up in other places.
+
+Sometimes, it's possible to fix the test, without really fixing the root cause. This can be just as pernicious as skipping a test. Again, you've concealed the smoke, but the fire is still burning. You've treated the symtoms, but not the cause.
+
+The best solution, is the one that fixes the root cause.
+
+When you discover that there's a test that's flaking out on you, there's a temptation to run `git blame` and find out who wrote that test. You want to point the finger: you wrote a flaky test, now fix it!
+
+Don't be like that. If anything, you should be thanking them. The test that's flaky may not the only bad actor here. It's done us a favour by showing us that there's a problem. The sooner you know about a problem, the sooner you can fix it.
