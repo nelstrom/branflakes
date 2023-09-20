@@ -1,7 +1,7 @@
 /* eslint-disable qunit/no-ok-equality */
 import { module, test } from 'qunit';
 
-module('Illustrative test', function () {
+module('What is a flaky test?', function () {
   test('passes', function (assert) {
     assert.true(1 === 1);
   });
