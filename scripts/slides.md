@@ -95,4 +95,47 @@ Slide: dynamic modifier (no waiter) timeline with 'settledness' (failing)
 Slide: dynamic modifier (with waiter) timeline with 'settledness' (passing)
 
 ## Example: Leaky state
+
+Live code: Leaky state test
+
+Slide: Qunit.config.reorder
+
+Live code: open test-helper and set reorder=false
+
+Slide: Qunit.config.seed
+
+Live code: show test-helper stanza
+
+Slide: sequence permutations
+
+Live code: show leaky-state-test, then route one, two, three
+
+Live code: change route three (fix the symptom)
+
+Slide: test lifetimes and global state lifetime (failing test 3)
+Slide: test lifetimes and global state lifetime - fix the symptom (passing test 3)
+Slide: test lifetimes and global state lifetime - fix the cause (passing test 3)
+
+Live code: undo the previous 'fix'. Use 'beforeEach()' to fix the cause.
+
+Slide: Global state is not bad. (Global variables are)
+
+Slide: ember-browser-services
+
+Live code: (maybe show a diff? maybe pre-record this section?)
+
+Slide: window service in Production is an alias to the browser's Window
+Slide: window service in Test is a mock Window object
+
+Live code: call `setupBrowserFakes()`
+
 ## Outro
+
+Slide: diagram of original state (global variable outlives test timelines, test three fails)
+Slide: skipping a test (global variable outlives test timelines, test three is skipped)
+Slide: fixing a test (global variable outlives test timelines, test three passes)
+Slide: fixing the root cause (mock window has same lifetime as tests, all tests pass)
+
+Slide: git blame (angry men pointing the finger at each other)
+Slide: fixing a problem
+
