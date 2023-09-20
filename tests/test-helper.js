@@ -9,7 +9,7 @@ setApplication(Application.create(config.APP));
 
 setup(QUnit.assert);
 
-QUnit.config.reorder = false;
+// QUnit.config.reorder = false;
 
 QUnit.config.urlConfig.push({
   id: 'seed',
