@@ -116,7 +116,7 @@ It's important to stress that red comes first. You want to see your tests fail b
 
 Your tests are a safety harness. They're there to catch you when you break stuff. You want to test your safety harness.
 
-I don't want to be a total purist here. You're not always going to write the test first. You're not always going to see red before green. But you can correct this oversight by intentionally breaking your implementation. If the test goes red, yo u can trust it. You've tested your tests.
+I don't want to be a total purist here. You're not always going to write the test first. You're not always going to see red before green. But you can correct this oversight by intentionally breaking your implementation. If the test goes red, you can trust it. You've tested your tests.
 
 ## Strategy: make it fail, then make it green
 
