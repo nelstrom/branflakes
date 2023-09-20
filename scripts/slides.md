@@ -56,10 +56,43 @@ Live coding: broken tests
 
 Slide: marble run splitter video
 
-Slide: marble run diagram
+Slide: marble run diagram (LHS to win)
 
 Slide: aligned list
 Slide: askew list
+
+Slide: marble run diagram (RHS to win)
+
+Live code: test + static modifier side by side
+Slide: timeline for static modifier (pass)
+
+Live code: test + dynamic modifier side by side
+Slide: timeline for dynamic modifier (fail)
+
+Live code: add a delay (500, 10, 50) to the test
+Live code: add a delay to the modifier
+
+Slide: marble run switch video
+Slide: ember-test-waiters
+
+Live code: wrap asynchrony in `waitForPromise()`
+
+Live code: use LONG delay on modifier timeout
+Live code: remove delay from timeout
+
+## How does waitForPromise work - "Settled state"
+
+Live code: explain `await visit()`
+
+Slide: What happens when you `visit("/three")`?
+
+Slide: static modifier timeline with 'settledness' (passing)
+
+Slide: Global settled state: false
+Slide: Global settled state: true
+
+Slide: dynamic modifier (no waiter) timeline with 'settledness' (failing)
+Slide: dynamic modifier (with waiter) timeline with 'settledness' (passing)
 
 ## Example: Leaky state
 ## Outro

@@ -5,7 +5,7 @@ async function load() {
   return await import('highlight.js');
 }
 
-export default modifier(async function highlighter(element) {
+export default modifier(async (element) => {
   const module = await load();
   const hljs = module.default;
 
