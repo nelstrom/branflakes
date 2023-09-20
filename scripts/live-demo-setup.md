@@ -11,6 +11,8 @@
 Check `main` branch before talk:
 
 1. Ensure that `three.hbs` starts out without syntax highlighting
+2. Ensure that ember-browser-services isn't already in use
+3. Ensure that Qunit.config.reorder is using the default value
 
 ## Introduction
 
