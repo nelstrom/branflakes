@@ -7,6 +7,7 @@
 3. Open browser at `http://localhost:4200/tests`
 4. Click "Hide container"
 5. Bump up the font size
+6. Open developer tools on right, and boost font size (and close again)
 
 Check `main` branch before talk:
 
